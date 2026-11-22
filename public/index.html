@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fff9ec" />
+  <title>Friend's Fridge</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main>
+    <header class="brand">
+      <a class="wordmark" href="#my-fridge">
+        <svg width="37" height="40" viewBox="0 0 37 40" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 11a5 5 0 0 1 5-5h13a4 4 0 0 1 4 4v23H9z" fill="#ffdc72"/>
+          <path d="M9 17h22M13 10v3m0 9v4m0 7v3m14-3v3M4 15l-2-2m3-3V7m17 20q2 3 4 0" />
+          <path d="M20 23h.1m8 0h.1" stroke-width="2.7"/>
+        </svg>
+        Friend's Fridge
+      </a>
+      <nav class="main-nav" aria-label="Main navigation" hidden>
+        <a href="#my-fridge">My Fridge</a>
+        <a href="#recognition">Photo Recognition</a>
+        <a href="#recipes">Recipes</a>
+        <a href="#friends">Friends<span class="notification-dot unread-dot" data-unread-summary role="img" aria-label="Unread messages" hidden></span></a>
+      </nav>
+      <details id="account-menu" class="account-menu" hidden>
+        <summary id="account-avatar" class="avatar" aria-label="Account menu"></summary>
+        <div class="account-options">
+          <a href="#profile">Edit profile</a>
+          <button type="button" id="logout">Log out</button>
+        </div>
+      </details>
+    </header>
+
+    <p id="notice" role="status" aria-live="polite"></p>
+
+    <section id="auth-panel">
+      <div class="card">
+        <nav class="tabs" aria-label="Account access">
+          <button type="button" id="show-login" aria-pressed="true">Log in</button>
+          <button type="button" id="show-register" aria-pressed="false">Create account</button>
+        </nav>
+        <form id="login-form" autocomplete="off">
+          <h1>Welcome back</h1>
+          <label>Username or email<input name="identifier" autocomplete="off" maxlength="255" required /></label>
+          <label>Password<input name="password" type="password" autocomplete="off" minlength="8" maxlength="128" required /></label>
+          <button type="submit">Log in</button>
+        </form>
+        <form id="register-form" hidden>
+          <h1>Create account</h1>
+          <label>Username<input name="username" autocomplete="username" pattern="[A-Za-z0-9_]{3,50}" minlength="3" maxlength="50" title="3-50 letters, numbers or underscores" required /></label>
+          <label>Display name<input name="display_name" autocomplete="nickname" maxlength="100" required /></label>
+          <label>Email<input name="email" type="email" autocomplete="email" maxlength="255" required /></label>
+          <label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required /></label>
+          <button type="submit">Create account</button>
+        </form>
+      </div>
+    </section>
+
+    <div id="dashboard" hidden>
+      <section id="friends-page" class="page" aria-labelledby="friends-title">
+        <div class="page-heading">
+          <h1 id="friends-title" tabindex="-1">Friends</h1>
+          <div class="actions">
+            <a id="invitations-link" class="button secondary" href="#invitations">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 19v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2m4-12v6m-3-3h6"/></svg>
+              Invites<span id="invite-dot" class="notification-dot" aria-label="Pending invitations" hidden></span>
+            </a>
+          </div>
+        </div>
+
+        <form id="friend-filter-form" class="search" role="search">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 5 5"/></svg>
+          <input id="friend-filter" name="q" type="search" aria-label="Search your friends" maxlength="100" placeholder="Search your friends" autocomplete="off" />
+        </form>
+
+        <div id="friend-directory">
+          <template id="friend-fridge-icon">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="6" y="3" width="12" height="17" rx="2" />
+              <path d="M6 9h12M9 6v1m0 5v3M8 20v1m8-1v1" />
+            </svg>
+          </template>
+          <ul id="friends-list" aria-label="Your friends"></ul>
+          <button type="button" class="secondary more" id="friends-more" hidden>Load more</button>
+        </div>
+      </section>
+
+      <section id="invitations-page" class="page" aria-labelledby="invitations-title" hidden>
+        <a class="back-link" href="#friends">← Friends</a>
+        <h1 id="invitations-title" tabindex="-1">Friend invites</h1>
+        <section class="invite-search" aria-labelledby="add-friends-title">
+          <h2 id="add-friends-title">Add friends</h2>
+          <form id="search-form" class="search" role="search">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 5 5"/></svg>
+            <input name="q" type="search" aria-label="Find new friends by username" maxlength="50" placeholder="Search by username" autocomplete="off" />
+          </form>
+          <div id="search-directory" hidden>
+            <p id="search-status" class="muted" role="status"></p>
+            <ul id="search-results" aria-label="People to invite"></ul>
+            <button type="button" class="secondary more" id="search-more" hidden>Load more results</button>
+          </div>
+        </section>
+        <div class="card invitations">
+          <h2>Received</h2>
+          <ul id="incoming-list"></ul>
+          <button type="button" class="secondary more" id="incoming-more" hidden>Load more received invites</button>
+          <h2>Sent</h2>
+          <ul id="outgoing-list"></ul>
+          <button type="button" class="secondary more" id="outgoing-more" hidden>Load more sent invites</button>
+        </div>
+      </section>
+
+      <section id="conversation-page" class="page conversation-page" aria-labelledby="conversation-title" hidden>
+        <a class="back-link" href="#friends">← Friends</a>
+        <header class="conversation-header">
+          <h1 id="conversation-title" tabindex="-1">Conversation</h1>
+          <div class="actions">
+            <button id="conversation-share-recipe" type="button" class="secondary" hidden>Share recipe</button>
+            <a id="conversation-fridge" class="button secondary" hidden>View fridge →</a>
+          </div>
+        </header>
+        <div id="conversation-history" class="conversation-history" role="region" aria-label="Message history" tabindex="0">
+          <button type="button" id="conversation-more" class="secondary" hidden>Load older messages</button>
+          <p id="conversation-status" class="muted" role="status"></p>
+          <ol id="conversation-messages" aria-label="Messages"></ol>
+        </div>
+        <form id="conversation-form" class="conversation-form" hidden>
+          <textarea name="text" aria-label="Message" placeholder="Write a message…" rows="1" maxlength="1000" required></textarea>
+          <button type="submit">Send</button>
+        </form>
+        <dialog id="conversation-share-dialog" aria-labelledby="conversation-share-title">
+          <form id="conversation-share-form">
+            <h2 id="conversation-share-title">Share a recipe</h2>
+            <p class="muted">Your friend will receive an invitation in this chat. The recipe is added to Shared with me only after they accept.</p>
+            <label>Your recipe<select name="recipe_id" required></select></label>
+            <div class="actions">
+              <button type="submit">Send invitation</button>
+              <button id="conversation-share-close" type="button" class="secondary">Cancel</button>
+            </div>
+            <p id="conversation-share-status" class="muted" role="status"></p>
+          </form>
+        </dialog>
+      </section>
+
+      <section id="fridge-page" class="page" aria-labelledby="fridge-title" hidden>
+        <div class="detail-nav">
+          <a class="back-link" href="#friends">← Back to Friends</a>
+          <button type="button" id="remove-friend" class="secondary danger" hidden>Remove friend</button>
+        </div>
+        <div class="fridge-heading">
+          <div id="fridge-avatar" class="avatar" aria-hidden="true" hidden></div>
+          <h1 id="fridge-title" tabindex="-1">Shared fridge</h1>
+        </div>
+        <p id="fridge-status" class="muted" role="status" hidden></p>
+        <ul id="ingredient-list" class="ingredient-grid" aria-label="Available ingredients"></ul>
+        <button type="button" class="secondary more" id="fridge-more" hidden>Load more ingredients</button>
+        <a id="fridge-conversation" class="back-link fridge-conversation" hidden>Open conversation →</a>
+      </section>
+
+      <section id="my-fridge-page" class="page inventory-page" aria-labelledby="my-fridge-title" hidden>
+        <div class="page-heading"><h1 id="my-fridge-title" tabindex="-1">My Fridge</h1><button type="button" data-stock-add>+ Add food</button></div>
+        <p class="muted">A little stock, a lot of possibilities. Keep the good stuff in sight.</p>
+        <div class="fridge-scene">
+          <div class="fridge-cabinet">
+            <div class="fridge-freezer" aria-hidden="true"><span>fresh &amp; friendly</span><span>✦</span></div>
+            <div class="fridge-inside">
+              <div class="stock-heading"><h2>Your shelves</h2><span class="pill" data-stock-count>0 foods</span></div>
+              <p data-stock-status class="muted" role="status" aria-live="polite"></p>
+              <button type="button" class="secondary" data-stock-retry hidden>Reload fridge</button>
+              <ul data-stock class="stock-list" aria-label="Your food stock"></ul>
+              <div data-stock-empty class="stock-empty" hidden><span aria-hidden="true">🥕</span><h3>Room for something tasty</h3><p>Add food to start filling your shelves.</p></div>
+            </div>
+            <div class="fridge-door" aria-hidden="true"><span class="fridge-note">good food<br>good mood ☺</span><span class="fridge-handle"></span></div>
+          </div>
+        </div>
+        <p class="muted inventory-footnote">Only ingredients marked Friends appear in your shared fridge.</p>
+        <a href="#recognition" class="button secondary">Add from a photo →</a>
+        <dialog data-stock-dialog aria-labelledby="stock-dialog-title">
+          <form data-stock-form>
+            <h2 id="stock-dialog-title">Add food</h2>
+            <div data-stock-picker><label>Ingredient<input name="ingredient" list="stock-catalog" required maxlength="100" autocomplete="off" placeholder="Search ingredients…" /></label><datalist id="stock-catalog"></datalist></div>
+            <p data-stock-edit-name class="ingredient-name" hidden></p>
+            <label>Quantity <span data-stock-unit></span><input name="quantity" type="number" min="0.01" step="0.01" inputmode="decimal" required /></label>
+            <label>Who can see this food?<select name="visibility"><option value="private">Only me</option><option value="friends">Friends</option></select></label>
+            <p data-stock-help class="muted">Adding existing food increases its stock and keeps its sharing setting.</p>
+            <p data-stock-error role="alert"></p>
+            <div class="actions"><button type="button" class="secondary" data-stock-cancel>Cancel</button><button type="submit">Add to fridge</button></div>
+          </form>
+        </dialog>
+      </section>
+
+      <section id="recognition-page" class="page" aria-labelledby="recognition-title" hidden>
+        <h1 id="recognition-title" tabindex="-1">Photo Recognition</h1>
+        <p class="muted">Snap your groceries. Review the suggestions. Stock your fridge.</p>
+        <div class="card recognition-panel">
+          <h2>1. Choose a photo</h2>
+          <label for="ingredient-photo">Ingredient photo</label>
+          <div class="photo-file-picker">
+            <input id="ingredient-photo" data-upload type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" aria-describedby="photo-file-help" />
+            <span class="photo-file-button" aria-hidden="true">Choose File</span>
+            <span data-upload-name class="photo-file-name" aria-hidden="true">No file chosen</span>
+          </div>
+          <p id="photo-file-help" class="muted">JPG or PNG · up to 10 MB and 20 megapixels. Photos are processed in memory and are not saved.</p>
+          <canvas data-preview class="recognition-preview" role="img" aria-label="Uploaded photo with suggested ingredient detection boxes" hidden></canvas>
+          <div class="actions">
+            <button data-recognize type="button" disabled>Recognize Ingredients</button>
+            <button data-new type="button" class="secondary">Start New Photo</button>
+          </div>
+        </div>
+        <p data-status class="recognition-status" role="status" aria-live="polite">Choose a photo, or add ingredients manually. Nothing is saved until you confirm.</p>
+        <button data-retry type="button" class="secondary" hidden>Reload ingredient list</button>
+        <form data-confirm-form class="card recognition-panel">
+          <h2>2. Review and confirm</h2>
+          <p class="muted">Correct names using the shared ingredient list. Check counts; enter grams (g) or millilitres (ml) yourself. The photo cannot measure weight or volume. Adding increases any existing stock.</p>
+          <datalist id="recognition-catalog" data-catalog></datalist>
+          <div data-rows></div>
+          <p data-empty class="muted">No ingredients to review yet.</p>
+          <div class="actions">
+            <button data-add type="button" class="secondary">+ Add Ingredient</button>
+            <button data-confirm type="submit" disabled>Confirm and Add to Fridge</button>
+          </div>
+          <a data-saved href="#my-fridge" class="back-link" hidden>View My Fridge →</a>
+        </form>
+        <template data-row-template>
+          <div class="recognition-row">
+            <label>Ingredient name<input name="ingredient" list="recognition-catalog" maxlength="100" required autocomplete="off" /></label>
+            <label>Quantity<input name="quantity" type="number" min="0.01" step="0.01" required inputmode="decimal" /></label>
+            <span data-unit class="muted" aria-live="polite"></span>
+            <button type="button" class="secondary">Remove</button>
+            <small data-confidence class="muted"></small>
+          </div>
+        </template>
+      </section>
+
+      <section id="recipes-page" class="page" aria-labelledby="recipes-title" hidden>
+        <div class="page-heading">
+          <h1 id="recipes-title" tabindex="-1">Recipes</h1>
+          <button id="recipe-new" type="button" disabled>+ New recipe</button>
+        </div>
+        <div id="recipe-browse">
+          <p class="muted">Find recipes based on what you have in your fridge.</p>
+          <div class="tabs recipe-filters" role="group" aria-label="Filter recipes">
+            <button type="button" data-recipe-filter="all" aria-pressed="true">All</button>
+            <button type="button" data-recipe-filter="ready" aria-pressed="false">Ready to make</button>
+            <button type="button" data-recipe-filter="saved" aria-pressed="false">Saved</button>
+            <button type="button" data-recipe-filter="owned" aria-pressed="false">My recipes</button>
+            <button type="button" data-recipe-filter="shared" aria-pressed="false">Shared with me</button>
+          </div>
+          <p id="recipe-status" class="muted" role="status"></p>
+          <button id="recipe-retry" type="button" class="secondary" hidden>Try again</button>
+          <div id="recipe-results" class="recipe-grid"></div>
+        </div>
+        <section id="recipe-detail" aria-labelledby="recipe-detail-title" hidden>
+          <button type="button" class="secondary" data-recipe-back>← Back to recipes</button>
+          <div class="card recipe-panel">
+            <div class="recipe-toolbar">
+              <h2 id="recipe-detail-title" tabindex="-1"></h2>
+              <button type="button" id="recipe-save" aria-pressed="false">Save recipe</button>
+            </div>
+            <div id="recipe-owner-actions" class="actions" hidden>
+              <button type="button" id="recipe-edit" class="secondary">Edit recipe</button>
+              <button type="button" id="recipe-delete" class="secondary">Delete recipe</button>
+            </div>
+            <div id="recipe-delete-confirm" hidden>
+              <p>Delete this recipe permanently? It will also be removed from saved and shared lists.</p>
+              <div class="actions">
+                <button type="button" id="recipe-delete-yes">Delete permanently</button>
+                <button type="button" id="recipe-delete-no" class="secondary">Cancel</button>
+              </div>
+            </div>
+            <p id="recipe-detail-meta" class="muted"></p>
+            <p id="recipe-description"></p>
+            <div id="recipe-illustration"></div>
+            <div class="recipe-detail-grid">
+              <section aria-labelledby="recipe-ingredients-title">
+                <h3 id="recipe-ingredients-title">Ingredients</h3>
+                <ul id="recipe-ingredients"></ul>
+              </section>
+              <section aria-labelledby="recipe-directions-title">
+                <h3 id="recipe-directions-title">Directions</h3>
+                <ol id="recipe-directions"></ol>
+              </section>
+            </div>
+            <form id="recipe-share" class="recipe-toolbar" hidden>
+              <label>Share with a friend <select name="recipient" aria-label="Share with a friend" required></select></label>
+              <button type="submit" class="secondary">Share recipe</button>
+            </form>
+            <button id="recipe-remove-shared" type="button" class="secondary" hidden>Remove from shared recipes</button>
+            <div id="recipe-remove-confirm" hidden>
+              <p>Remove this recipe from Shared with me and your saved recipes? The author's original recipe will stay available to them.</p>
+              <div class="actions">
+                <button id="recipe-remove-yes" type="button">Remove shared recipe</button>
+                <button id="recipe-remove-no" type="button" class="secondary">Cancel</button>
+              </div>
+            </div>
+            <p id="recipe-action-status" class="muted" role="status"></p>
+          </div>
+        </section>
+        <section id="recipe-create" aria-labelledby="recipe-create-title" hidden>
+          <button type="button" class="secondary" data-recipe-back>← Back to recipes</button>
+          <form id="recipe-form" class="card recipe-panel">
+            <h2 id="recipe-create-title" tabindex="-1">New recipe</h2>
+            <label>Recipe name<input name="title" maxlength="200" required /></label>
+            <label>Description (optional)<input name="description" maxlength="500" /></label>
+            <label for="recipe-photo">Recipe photo (optional)</label>
+            <div class="photo-file-picker">
+              <input id="recipe-photo" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" aria-describedby="recipe-photo-help" />
+              <span class="photo-file-button" aria-hidden="true">Choose File</span>
+              <span id="recipe-photo-name" class="photo-file-name" aria-hidden="true">No file chosen</span>
+            </div>
+            <p id="recipe-photo-help" class="muted">JPG or PNG, up to 2 MB and 20 megapixels. Leave blank to use the default illustration.</p>
+            <img id="recipe-photo-preview" class="recipe-photo-preview" alt="Selected recipe photo" hidden />
+            <button id="recipe-photo-remove" type="button" class="secondary" hidden>Remove photo</button>
+            <label>Servings<input name="servings" type="number" min="1" max="10000" value="2" required /></label>
+            <fieldset>
+              <legend>Ingredients and quantities</legend>
+              <div id="recipe-input-items"></div>
+              <button id="recipe-add-item" type="button" class="secondary">+ Add ingredient</button>
+            </fieldset>
+            <label>Directions (one step per line)<textarea name="instructions" rows="4" maxlength="4000" required></textarea></label>
+            <button type="submit">Create recipe</button>
+            <p id="recipe-form-status" class="muted" role="status"></p>
+          </form>
+        </section>
+        <template id="recipe-card">
+          <article class="card recipe-card">
+            <span class="pill recipe-badge"></span>
+            <h2></h2>
+            <p class="muted"></p>
+            <button type="button" class="secondary">View recipe →</button>
+          </article>
+        </template>
+        <template id="recipe-item-row">
+          <div class="recipe-item-row">
+            <label>Ingredient<select name="ingredient" aria-label="Ingredient" required></select></label>
+            <label>Quantity<input name="quantity" type="number" min="0.01" step="0.01" required /></label>
+            <span data-recipe-unit aria-live="polite" class="muted"></span>
+            <button type="button" class="secondary" aria-label="Remove ingredient">Remove</button>
+          </div>
+        </template>
+      </section>
+
+      <section id="profile-page" class="page narrow" aria-labelledby="profile-title" hidden>
+        <a class="back-link" href="#friends">← Back to Friends</a>
+        <div class="card">
+          <div class="profile-heading">
+            <div id="profile-avatar" class="avatar" aria-hidden="true"></div>
+            <div><h1 id="profile-title" tabindex="-1">Your profile</h1><p id="username" class="muted"></p></div>
+          </div>
+          <form id="profile-form">
+            <label>Display name<input name="display_name" autocomplete="nickname" maxlength="100" required /></label>
+            <label>Email<input name="email" type="email" autocomplete="email" maxlength="255" required /></label>
+            <button type="submit">Save changes</button>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <dialog id="request-dialog" aria-labelledby="request-title">
+      <form id="request-form">
+        <h2 id="request-title">Request ingredient</h2>
+        <p id="request-stock" class="muted"></p>
+        <label>Quantity <span id="request-unit"></span><input name="quantity" type="number" min="0.01" step="0.01" inputmode="decimal" required autofocus /></label>
+        <label>Note <span class="muted">(optional)</span><textarea name="message" maxlength="500" rows="3" placeholder="Can I pick it up this evening?"></textarea></label>
+        <p id="request-error" role="alert"></p>
+        <div class="actions">
+          <button id="close-request" class="secondary" type="button">Close</button>
+          <button type="submit">Send request</button>
+        </div>
+      </form>
+    </dialog>
+
+    <footer class="image-credits">Default illustrations: <a href="https://www.themealdb.com" target="_blank" rel="noopener noreferrer">TheMealDB</a> &amp; <a href="https://www.thecocktaildb.com" target="_blank" rel="noopener noreferrer">TheCocktailDB</a> · <a href="/image-demo">See image preview</a></footer>
+    <noscript>Please enable JavaScript to use accounts and friends.</noscript>
+  </main>
+</body>
+</html>

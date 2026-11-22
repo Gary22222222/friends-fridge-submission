@@ -1,0 +1,18 @@
+{
+  "change": "Repository links and review destination only; no business logic changes.",
+  "release_id": "rel_01M82SQRVYW2K6RNHA0G63NNA8",
+  "cloud_commit": "2e3dbbafa9a93bb03dee89be2e718341ab6446ca",
+  "previous_functional_evidence": "verification.json",
+  "previous_functional_release": "rel_01M82Q9D5FZ66W5MAB2FGBJMZ0",
+  "checks": {
+    "deployment": "serving and dataPlane confirmed; clean cloud commit",
+    "health": {
+      "status": "ok",
+      "database": "DeepSpace Durable Object SQLite",
+      "lookup_protocol": "lookup-v1"
+    },
+    "source_files": 363
+  },
+  "note": "Previous functional tests are historical evidence for unchanged business logic; they were not rerun as this release.",
+  "review_repository": "https://github.com/Gary22222222/friends-fridge-submission"
+}

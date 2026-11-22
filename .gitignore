@@ -1,0 +1,13 @@
+node_modules/
+.env
+.DS_Store
+npm-debug.log*
+.local/
+# Personal interview notes stay local.
+/docs/interview-guide.md
+.venv/
+__pycache__/
+.pytest_cache/
+*.pt
+*.onnx
+services/recognition/.cache/
