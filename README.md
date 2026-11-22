@@ -4,8 +4,7 @@ Repository: https://github.com/Gary22222222/friends-fridge-submission
 
 Live app: https://friends-fridge-jianghui.app.space
 
-This is the submission review branch. The full-stack application is in
-**`deepspace-app/`**. Start there for installation, source review and tests.
+Start there for installation, source review and tests.
 DeepSpace is the sole deployment authority; this branch contains an exact
 application snapshot of the cloud source commit recorded in
 [`release/deepspace.json`](release/deepspace.json).
